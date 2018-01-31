@@ -1,13 +1,11 @@
 <p align="center">
-  <img src="https://d1j8pt39hxlh3d.cloudfront.net/development/emojione/2.2/513/2248.svg" width="256">
-</p>
-<h1 align="center">jsdom-worker</h1>
-<p align="center"><em>Lets you use Web Workers in Jest!</em></p>
-<p align="center">
-<a href="https://www.npmjs.org/package/jsdom-worker"><img src="https://img.shields.io/npm/v/jsdom-worker.svg?style=flat" alt="npm"></a> <a href="https://travis-ci.org/developit/jsdom-worker"><img src="https://travis-ci.org/developit/jsdom-worker.svg?branch=master" alt="travis"></a>
+  <img src="https://i.imgur.com/s9rO8Jh.jpg" width="1100">
 </p>
 
----
+
+# jsdom-worker
+
+> _Lets you use Web Workers in Jest!_
 
 This is an experimental implementation of the Web Worker API (specifically Dedicated Worker) for JSDOM.
 
@@ -16,6 +14,9 @@ It does not currently do any real threading, rather it implements the `Worker` i
 It supports both "inline" _(created via Blob)_ and standard _(loaded via URL)_ workers.
 
 > **Hot Take:** this module likely works in the browser, where it could act as a simple inline worker "poorlyfill".
+
+<a href="https://www.npmjs.org/package/jsdom-worker"><img src="https://img.shields.io/npm/v/jsdom-worker.svg?style=flat" alt="npm"></a> <a href="https://travis-ci.org/developit/jsdom-worker"><img src="https://travis-ci.org/developit/jsdom-worker.svg?branch=master" alt="travis"></a>
+
 
 ## Why?
 
