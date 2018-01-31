@@ -1,0 +1,44 @@
+{
+  "name": "jsdom-worker",
+  "version": "0.1.0",
+  "description": "Experimental Web Worker API implementation for JSDOM.",
+  "main": "dist/jsdom-inline-worker.js",
+  "module": "dist/jsdom-inline-worker.m.js",
+  "scripts": {
+    "prepare": "microbundle --external all",
+    "test": "eslint src test && npm run -s prepare && jest"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "keywords": [
+    "jsdom",
+    "web worker"
+  ],
+  "eslintConfig": {
+    "extends": "eslint-config-developit"
+  },
+  "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "babel-jest": "^22.1.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.16.0",
+    "eslint-config-developit": "^1.1.1",
+    "jest": "^22.1.4",
+    "microbundle": "^0.4.3",
+    "node-fetch": "^1.7.3"
+  },
+  "peerDependencies": {
+    "node-fetch": "*"
+  },
+  "dependencies": {
+    "mitt": "^1.1.3",
+    "uuid-v4": "^0.1.0"
+  }
+}
