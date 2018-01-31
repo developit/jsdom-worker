@@ -36,6 +36,7 @@ if (!global.document) {
 }
 
 function Event(type) { this.type = type; }
+Event.prototype.initEvent = Object;
 if (!global.document.createEvent) {
 	global.document.createEvent = function(type) {
 		let Ctor = global[type] || Event;
@@ -76,7 +77,6 @@ global.Worker = function Worker(url) {
 		.then( code => {
 			let vars = 'var self=this,global=self';
 			for (let k in scope) vars += `,${k}=self.${k}`;
-			// eval('(function() {'+vars+'\n'+code+'\n})').call(scope);
 			getScopeVar = eval('(function() {'+vars+'\n'+code+'\nreturn function(__){return eval(__)}})').call(scope);
 			let q = messageQueue;
 			messageQueue = null;
