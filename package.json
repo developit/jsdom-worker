@@ -2,8 +2,8 @@
   "name": "jsdom-worker",
   "version": "0.1.0",
   "description": "Experimental Web Worker API implementation for JSDOM.",
-  "main": "dist/jsdom-inline-worker.js",
-  "module": "dist/jsdom-inline-worker.m.js",
+  "main": "dist/jsdom-worker.js",
+  "module": "dist/jsdom-worker.m.js",
   "scripts": {
     "build": "microbundle --external all",
     "test": "eslint src test && npm run -s build && jest",
