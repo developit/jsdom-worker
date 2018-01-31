@@ -7,7 +7,7 @@
   "scripts": {
     "build": "microbundle --external all",
     "test": "eslint src test && npm run -s build && jest",
-    "prepare": "npm run -s build && npm i"
+    "prepare": "npm run -s build && npm t"
   },
   "babel": {
     "presets": [
