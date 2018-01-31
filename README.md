@@ -1,5 +1,7 @@
 # jsdom-worker
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/developit/jsdom-worker.svg)](https://greenkeeper.io/)
+
 This is an experimental implementation of the Web Worker API (specifically Dedicated Worker) for JSDOM.
 
 It does not currently do any real threading, rather it implements the `Worker` interface but all work is done in the current thread.  `jsdom-worker` runs wherever JSDOM runs, and does not require Node.
