@@ -5,8 +5,9 @@
   "main": "dist/jsdom-inline-worker.js",
   "module": "dist/jsdom-inline-worker.m.js",
   "scripts": {
-    "prepare": "microbundle --external all",
-    "test": "eslint src test && npm run -s prepare && jest"
+    "build": "microbundle --external all",
+    "test": "eslint src test && npm run -s build && jest",
+    "prepare": "npm run -s build && npm i"
   },
   "babel": {
     "presets": [
