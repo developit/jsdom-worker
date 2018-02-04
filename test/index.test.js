@@ -24,4 +24,14 @@ describe('jsdom-worker', () => {
 		await sleep(10);
 		expect(worker.onmessage).toHaveBeenCalledWith({ data: 'test' });
 	});
+
+	it('should work with IIFE', async () => {
+		const n = Math.random();
+		const code = `(function(n){ onmessage = e => { postMessage(n) } })(${n})`;
+		const worker = new Worker(URL.createObjectURL(new Blob([code])));
+		worker.onmessage = jest.fn();
+		worker.postMessage();
+		await sleep(10);
+		expect(worker.onmessage).toHaveBeenCalledWith({ data: n });
+	});
 });
