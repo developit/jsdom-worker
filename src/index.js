@@ -57,7 +57,8 @@ global.Worker = function Worker(url) {
 			postMessage(data) {
 				outside.emit('message', { data });
 			},
-			fetch: global.fetch
+			fetch: global.fetch,
+			importScripts(...urls) {}
 		},
 		getScopeVar;
 	inside.on('message', e => { let f = getScopeVar('onmessage'); if (f) f.call(scope, e); });
