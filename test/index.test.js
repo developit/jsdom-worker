@@ -1,5 +1,8 @@
 import 'jsdom-worker';
 
+import fs from 'fs';
+import path from 'path';
+
 const sleep = t => new Promise( r => { setTimeout(r, t); });
 
 describe('jsdom-worker', () => {
@@ -10,5 +13,15 @@ describe('jsdom-worker', () => {
 		worker.postMessage(5);
 		await sleep(10);
 		expect(worker.onmessage).toHaveBeenCalledWith({ data: 10 });
+	});
+
+	it('should work with importScripts', async () => {
+		const mod = fs.readFileSync(path.join(__dirname, './module.js'));
+		const code = fs.readFileSync(path.join(__dirname, './worker.js'));
+		const worker = new Worker(URL.createObjectURL(new Blob([mod + code])));
+		worker.onmessage = jest.fn();
+		worker.postMessage();
+		await sleep(10);
+		expect(worker.onmessage).toHaveBeenCalledWith({ data: 'test' });
 	});
 });
