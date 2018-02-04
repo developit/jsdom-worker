@@ -78,7 +78,7 @@ global.Worker = function Worker(url) {
 		.then( code => {
 			let vars = 'var self=this,global=self';
 			for (let k in scope) vars += `,${k}=self.${k}`;
-			getScopeVar = eval('(function() {'+vars+'\n'+code+'\nreturn function(__){return eval(__)}})').call(scope);
+			getScopeVar = eval('(function() {'+vars+';\n'+code+'\nreturn function(__){return eval(__)}})').call(scope);
 			let q = messageQueue;
 			messageQueue = null;
 			q.forEach(this.postMessage);
