@@ -1,6 +1,6 @@
 {
   "name": "jsdom-worker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Experimental Web Worker API implementation for JSDOM.",
   "main": "dist/jsdom-worker.js",
   "module": "dist/jsdom-worker.module.js",
@@ -8,7 +8,8 @@
   "scripts": {
     "build": "microbundle --external all",
     "test": "eslint src test && npm run -s build && jest",
-    "prepare": "npm run -s build && npm t"
+    "prepare": "npm run -s build && npm t",
+    "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
     "presets": [
