@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Experimental Web Worker API implementation for JSDOM.",
   "main": "dist/jsdom-worker.js",
-  "module": "dist/jsdom-worker.m.js",
+  "module": "dist/jsdom-worker.module.js",
+  "unpkg": "dist/jsdom-worker.umd.js",
   "scripts": {
     "build": "microbundle --external all",
     "test": "eslint src test && npm run -s build && jest",
@@ -11,7 +12,14 @@
   },
   "babel": {
     "presets": [
-      "env"
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "8"
+          }
+        }
+      ]
     ]
   },
   "keywords": [
@@ -27,13 +35,13 @@
     "dist"
   ],
   "devDependencies": {
-    "babel-jest": "^22.1.0",
-    "babel-preset-env": "^1.6.1",
-    "eslint": "^4.16.0",
+    "@babel/preset-env": "^7.10.2",
+    "babel-jest": "^26.0.1",
+    "eslint": "^7.2.0",
     "eslint-config-developit": "^1.1.1",
-    "jest": "^22.1.4",
-    "microbundle": "^0.4.3",
-    "node-fetch": "^1.7.3"
+    "jest": "^26.0.1",
+    "microbundle": "^0.12.1",
+    "node-fetch": "^2.6.0"
   },
   "peerDependencies": {
     "node-fetch": "*"
