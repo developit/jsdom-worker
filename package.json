@@ -1,6 +1,6 @@
 {
   "name": "jsdom-worker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Experimental Web Worker API implementation for JSDOM.",
   "main": "dist/jsdom-worker.js",
   "module": "dist/jsdom-worker.module.js",
