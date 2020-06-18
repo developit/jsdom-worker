@@ -10,7 +10,9 @@ if (!global.URL.$$objects) {
 		global.URL.$$objects[id] = blob;
 		return `blob:http://localhost/${id}`;
 	};
+}
 
+if (!global.fetch || !global.fetch.jsdomWorker) {
 	let oldFetch = global.fetch || fetch;
 	global.fetch = function(url, opts) {
 		if (url.match(/^blob:/)) {
@@ -29,6 +31,7 @@ if (!global.URL.$$objects) {
 		}
 		return oldFetch.call(this, url, opts);
 	};
+	global.fetch.jsdomWorker = true;
 }
 
 if (!global.document) {
@@ -46,26 +49,31 @@ if (!global.document.createEvent) {
 
 
 global.Worker = function Worker(url) {
-	let messageQueue = [],
-		inside = mitt(),
-		outside = mitt(),
-		scope = {
-			onmessage: null,
-			dispatchEvent: inside.emit,
-			addEventListener: inside.on,
-			removeEventListener: inside.off,
-			postMessage(data) {
-				outside.emit('message', { data });
-			},
-			fetch: global.fetch,
-			importScripts() {}
+	let getScopeVar;
+	let messageQueue = [];
+	let inside = mitt();
+	let outside = mitt();
+	let scope = {
+		onmessage: null,
+		dispatchEvent: inside.emit,
+		addEventListener: inside.on,
+		removeEventListener: inside.off,
+		postMessage(data) {
+			outside.emit('message', { data });
 		},
-		getScopeVar;
-	inside.on('message', e => { let f = getScopeVar('onmessage'); if (f) f.call(scope, e); });
+		fetch: global.fetch,
+		importScripts() {}
+	};
+	inside.on('message', e => {
+		let f = scope.onmessage || getScopeVar('onmessage');
+		if (f) f.call(scope, e);
+	});
 	this.addEventListener = outside.on;
 	this.removeEventListener = outside.off;
 	this.dispatchEvent = outside.emit;
-	outside.on('message', e => { this.onmessage && this.onmessage(e); });
+	outside.on('message', e => {
+		if (this.onmessage) this.onmessage(e);
+	});
 	this.postMessage = data => {
 		if (messageQueue!=null) messageQueue.push(data);
 		else inside.emit('message', { data });
@@ -74,8 +82,8 @@ global.Worker = function Worker(url) {
 		throw Error('Not Supported');
 	};
 	global.fetch(url)
-		.then( r => r.text() )
-		.then( code => {
+		.then(r => r.text())
+		.then(code => {
 			let vars = 'var self=this,global=self';
 			for (let k in scope) vars += `,${k}=self.${k}`;
 			getScopeVar = Function(
@@ -85,5 +93,8 @@ global.Worker = function Worker(url) {
 			messageQueue = null;
 			q.forEach(this.postMessage);
 		})
-		.catch( e => { outside.emit('error', e); console.error(e); });
+		.catch(e => {
+			outside.emit('error', e);
+			console.error(e);
+		});
 };
