@@ -58,7 +58,7 @@ global.Worker = function Worker(url) {
 				outside.emit('message', { data });
 			},
 			fetch: global.fetch,
-			importScripts(...urls) {}
+			importScripts() {}
 		},
 		getScopeVar;
 	inside.on('message', e => { let f = getScopeVar('onmessage'); if (f) f.call(scope, e); });
@@ -78,7 +78,9 @@ global.Worker = function Worker(url) {
 		.then( code => {
 			let vars = 'var self=this,global=self';
 			for (let k in scope) vars += `,${k}=self.${k}`;
-			getScopeVar = eval('(function() {'+vars+';\n'+code+'\nreturn function(__){return eval(__)}})').call(scope);
+			getScopeVar = Function(
+				vars + ';\n' + code + '\nreturn function(n){return n=="onmessage"?onmessage:null;}'
+			).call(scope);
 			let q = messageQueue;
 			messageQueue = null;
 			q.forEach(this.postMessage);
