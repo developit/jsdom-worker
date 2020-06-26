@@ -31,6 +31,7 @@
     "extends": "eslint-config-developit"
   },
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
+  "homepage": "https://github.com/developit/jsdom-worker",
   "license": "MIT",
   "files": [
     "dist"
