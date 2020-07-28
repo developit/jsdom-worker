@@ -53,6 +53,7 @@ global.Worker = function Worker(url) {
 	let messageQueue = [];
 	let inside = mitt();
 	let outside = mitt();
+	let terminated = false;
 	let scope = {
 		onmessage: null,
 		dispatchEvent: inside.emit,
@@ -65,6 +66,7 @@ global.Worker = function Worker(url) {
 		importScripts() {}
 	};
 	inside.on('message', e => {
+		if (terminated) return;
 		let f = scope.onmessage || getScopeVar('onmessage');
 		if (f) f.call(scope, e);
 	});
@@ -75,11 +77,14 @@ global.Worker = function Worker(url) {
 		if (this.onmessage) this.onmessage(e);
 	});
 	this.postMessage = data => {
-		if (messageQueue!=null) messageQueue.push(data);
+		if (terminated) return;
+		if (messageQueue != null) messageQueue.push(data);
 		else inside.emit('message', { data });
 	};
 	this.terminate = () => {
-		throw Error('Not Supported');
+		console.warn('worker.terminate command is not supported, your tests might behave unexpectedly');
+		messageQueue = null;
+		terminated = true;
 	};
 	global.fetch(url)
 		.then(r => r.text())
