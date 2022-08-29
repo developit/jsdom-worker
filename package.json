@@ -11,6 +11,7 @@
     "prepare": "npm run -s build && npm t",
     "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
+  "repository": "developit/jsdom-worker",
   "babel": {
     "presets": [
       [
