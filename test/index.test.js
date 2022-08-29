@@ -3,7 +3,10 @@ import 'jsdom-worker';
 import fs from 'fs';
 import path from 'path';
 
-const sleep = t => new Promise( r => { setTimeout(r, t); });
+const sleep = t =>
+	new Promise(r => {
+		setTimeout(r, t);
+	});
 
 describe('jsdom-worker', () => {
 	it('should work', async () => {
@@ -16,11 +19,11 @@ describe('jsdom-worker', () => {
 	});
 
 	it('should work with importScripts', async () => {
-		const mod = fs.readFileSync(path.join(__dirname, './module.js'));
-		const code = fs.readFileSync(path.join(__dirname, './worker.js'));
+		const mod = fs.readFileSync(path.join(__dirname, './module.js'), 'utf-8');
+		const code = fs.readFileSync(path.join(__dirname, './worker.js'), 'utf-8');
 		const worker = new Worker(URL.createObjectURL(new Blob([mod + code])));
 		worker.onmessage = jest.fn();
-		worker.postMessage();
+		worker.postMessage(0);
 		await sleep(10);
 		expect(worker.onmessage).toHaveBeenCalledWith({ data: 'test' });
 	});
@@ -30,7 +33,7 @@ describe('jsdom-worker', () => {
 		const code = `(function(n){ onmessage = e => { postMessage(n) } })(${n})`;
 		const worker = new Worker(URL.createObjectURL(new Blob([code])));
 		worker.onmessage = jest.fn();
-		worker.postMessage();
+		worker.postMessage({ hi: 'bye' });
 		await sleep(10);
 		expect(worker.onmessage).toHaveBeenCalledWith({ data: n });
 	});

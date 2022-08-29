@@ -2,14 +2,13 @@
   <img src="https://i.imgur.com/Xqla6Ia.jpg" width="1100">
 </p>
 
-
 # jsdom-worker
 
 > _Lets you use Web Workers in Jest!_
 
 This is an experimental implementation of the Web Worker API (specifically Dedicated Worker) for JSDOM.
 
-It does not currently do any real threading, rather it implements the `Worker` interface but all work is done in the current thread.  `jsdom-worker` runs wherever JSDOM runs, and does not require Node.
+It does not currently do any real threading, rather it implements the `Worker` interface but all work is done in the current thread. `jsdom-worker` runs wherever JSDOM runs, and does not require Node.
 
 It supports both "inline" _(created via Blob)_ and standard _(loaded via URL)_ workers.
 
@@ -17,10 +16,9 @@ It supports both "inline" _(created via Blob)_ and standard _(loaded via URL)_ w
 
 <a href="https://www.npmjs.org/package/jsdom-worker"><img src="https://img.shields.io/npm/v/jsdom-worker.svg?style=flat" alt="npm"></a> <a href="https://travis-ci.org/developit/jsdom-worker"><img src="https://travis-ci.org/developit/jsdom-worker.svg?branch=master" alt="travis"></a>
 
-
 ## Why?
 
-Jest uses a JSDOM environment by default, which means it doesn't support Workers. This means it is impossible to test code that requires both NodeJS functionality _and_ Web Workers.  `jsdom-worker` implements enough of the Worker spec that it is now possible to do so.
+Jest uses a JSDOM environment by default, which means it doesn't support Workers. This means it is impossible to test code that requires both NodeJS functionality _and_ Web Workers. `jsdom-worker` implements enough of the Worker spec that it is now possible to do so.
 
 ## Installation
 
@@ -29,13 +27,13 @@ Jest uses a JSDOM environment by default, which means it doesn't support Workers
 ## Example
 
 ```js
-import 'jsdom-global/register'
-import 'jsdom-worker'
+import 'jsdom-global/register';
+import 'jsdom-worker';
 
-let code = `onmessage = e => postMessage(e.data*2)`
-let worker = new Worker(URL.createObjectURL(new Blob([code])))
-worker.onmessage = console.log
-worker.postMessage(5)  // 10
+let code = `onmessage = e => postMessage(e.data*2)`;
+let worker = new Worker(URL.createObjectURL(new Blob([code])));
+worker.onmessage = console.log;
+worker.postMessage(5); // 10
 ```
 
 ## Usage with Jest

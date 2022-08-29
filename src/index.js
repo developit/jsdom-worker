@@ -2,54 +2,83 @@ import mitt from 'mitt';
 import uuid from 'uuid-v4';
 import fetch, { Response } from 'node-fetch';
 
-if (!global.URL) global.URL = {};
-if (!global.URL.$$objects) {
-	global.URL.$$objects = new Map();
-	global.URL.createObjectURL = blob => {
+// eslint-disable-next-line no-undef
+
+const self = /** @type {globalThis} */ (
+	typeof global === 'object'
+		? global
+		: typeof globalThis === 'object'
+		? globalThis
+		: this
+);
+
+// @ts-ignore-next-line
+if (!self.URL) self.URL = {};
+
+// @ts-ignore
+let objects = /** @type {Map<any, string>} */ (self.URL.$$objects);
+
+if (!objects) {
+	objects = new Map();
+	// @ts-ignore
+	self.URL.$$objects = objects;
+	self.URL.createObjectURL = blob => {
 		let id = uuid();
-		global.URL.$$objects[id] = blob;
+		objects[id] = blob;
 		return `blob:http://localhost/${id}`;
 	};
 }
 
-if (!global.fetch || !global.fetch.jsdomWorker) {
-	let oldFetch = global.fetch || fetch;
-	global.fetch = function(url, opts) {
-		if (url.match(/^blob:/)) {
-			return new Promise( (resolve, reject) => {
+if (!self.fetch || !('jsdomWorker' in self.fetch)) {
+	let oldFetch = self.fetch || fetch;
+	self.fetch = function (url, opts) {
+		let _url = typeof url === 'object' ? url.url || url.href : url;
+		if (_url.match(/^blob:/)) {
+			return new Promise((resolve, reject) => {
 				let fr = new FileReader();
 				fr.onload = () => {
-					let Res = global.Response || Response;
+					let Res = self.Response || Response;
 					resolve(new Res(fr.result, { status: 200, statusText: 'OK' }));
 				};
 				fr.onerror = () => {
 					reject(fr.error);
 				};
-				let id = url.match(/[^/]+$/)[0];
-				fr.readAsText(global.URL.$$objects[id]);
+				let id = _url.match(/[^/]+$/)[0];
+				fr.readAsText(objects[id]);
 			});
 		}
 		return oldFetch.call(this, url, opts);
 	};
-	global.fetch.jsdomWorker = true;
+	Object.defineProperty(self.fetch, 'jsdomWorker', {
+		configurable: true,
+		value: true,
+	});
 }
 
-if (!global.document) {
-	global.document = {};
-}
+// @ts-ignore
+if (!self.document) self.document = {};
 
-function Event(type) { this.type = type; }
+function Event(type) {
+	this.type = type;
+}
 Event.prototype.initEvent = Object;
-if (!global.document.createEvent) {
-	global.document.createEvent = function(type) {
+if (!self.document.createEvent) {
+	self.document.createEvent = function (type) {
 		let Ctor = global[type] || Event;
 		return new Ctor(type);
 	};
 }
 
+// @ts-ignore
+self.Worker = Worker;
 
-global.Worker = function Worker(url) {
+/**
+ * @param {string | URL} url
+ * @param {object} [options = {}]
+ */
+function Worker(url, options) {
 	let getScopeVar;
+	/** @type {any[] | null} */
 	let messageQueue = [];
 	let inside = mitt();
 	let outside = mitt();
@@ -62,8 +91,8 @@ global.Worker = function Worker(url) {
 		postMessage(data) {
 			outside.emit('message', { data });
 		},
-		fetch: global.fetch,
-		importScripts() {}
+		fetch: self.fetch,
+		importScripts() {},
 	};
 	inside.on('message', e => {
 		if (terminated) return;
@@ -76,6 +105,7 @@ global.Worker = function Worker(url) {
 	outside.on('message', e => {
 		if (this.onmessage) this.onmessage(e);
 	});
+	this.onmessage = null;
 	this.postMessage = data => {
 		if (terminated) return;
 		if (messageQueue != null) messageQueue.push(data);
@@ -83,23 +113,27 @@ global.Worker = function Worker(url) {
 	};
 	this.terminate = () => {
 		console.warn('Worker.prototype.terminate() not supported in jsdom-worker.');
-		messageQueue = null;
 		terminated = true;
+		messageQueue = null;
 	};
-	global.fetch(url)
+	self
+		.fetch(url)
 		.then(r => r.text())
 		.then(code => {
 			let vars = 'var self=this,global=self';
 			for (let k in scope) vars += `,${k}=self.${k}`;
 			getScopeVar = Function(
-				vars + ';\n' + code + '\nreturn function(n){return n=="onmessage"?onmessage:null;}'
+				vars +
+					';\n' +
+					code +
+					'\nreturn function(n){return n=="onmessage"?onmessage:null;}'
 			).call(scope);
 			let q = messageQueue;
 			messageQueue = null;
-			q.forEach(this.postMessage);
+			if (q) q.forEach(this.postMessage);
 		})
 		.catch(e => {
 			outside.emit('error', e);
 			console.error(e);
 		});
-};
+}
