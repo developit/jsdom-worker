@@ -82,7 +82,7 @@ global.Worker = function Worker(url) {
 		else inside.emit('message', { data });
 	};
 	this.terminate = () => {
-		console.warn('worker.terminate command is not supported, your tests might behave unexpectedly');
+		console.warn('Worker.prototype.terminate() not supported in jsdom-worker.');
 		messageQueue = null;
 		terminated = true;
 	};
