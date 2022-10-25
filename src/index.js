@@ -33,7 +33,7 @@ if (!self.fetch || !('jsdomWorker' in self.fetch)) {
 	let oldFetch = self.fetch || fetch;
 	self.fetch = function (url, opts) {
 		let _url = typeof url === 'object' ? url.url || url.href : url;
-		if (_url.match(/^blob:/)) {
+		if (/^blob:/.test(_url)) {
 			return new Promise((resolve, reject) => {
 				let fr = new FileReader();
 				fr.onload = () => {
