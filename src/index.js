@@ -27,6 +27,10 @@ if (!objects) {
 		objects[id] = blob;
 		return `blob:http://localhost/${id}`;
 	};
+	self.URL.revokeObjectURL = (url) => {
+		let m = String(url).match(/^blob:http:\/\/localhost\/(.+)$/);
+		if (m) delete objects[m[1]];
+	};
 }
 
 if (!self.fetch || !('jsdomWorker' in self.fetch)) {
