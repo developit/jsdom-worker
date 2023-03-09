@@ -97,6 +97,8 @@ function Worker(url, options) {
 		},
 		fetch: self.fetch,
 		importScripts() {},
+		require,
+		exports,
 	};
 	inside.on('message', e => {
 		if (terminated) return;
